@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v-ww0hz=8j&n-bews_w%j7&d!=iixkx2#89&=stjr)mzk^&mnp'
+SECRET_KEY = 'django-insecure-4)z7*&d2%9g9^#+v8ocm*10^w-4%v5rv+tp6-ac##$ypu_-*mw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'softdesk_API',
+    'authentication',
+    'support_API',
 ]
 
 REST_FRAMEWORK = {
@@ -86,6 +87,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "authentication.User" 
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

@@ -1,7 +1,8 @@
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
+from authentication.models import User
 from rest_framework import permissions, viewsets
 
-from softdesk_API.quickstart.serializers import GroupSerializer, UserSerializer
+from authentication.serializers import GroupSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
