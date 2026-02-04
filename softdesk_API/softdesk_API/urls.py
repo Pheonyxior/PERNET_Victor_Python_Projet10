@@ -22,8 +22,13 @@ from authentication import views as auth_views
 from support_API import views as support_views
 
 router = routers.DefaultRouter()
+
 router.register(r"users", auth_views.UserViewSet)
 router.register(r"groups", auth_views.GroupViewSet)
+
+router.register(r"projects", support_views.ProjectViewSet)
+router.register(r"issues", support_views.IssueViewSet)
+router.register(r"comments", support_views.CommentViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
