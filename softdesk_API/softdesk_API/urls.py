@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 
-from authentication import views
+from authentication import views as auth_views
+from support_API import views as support_views
 
 router = routers.DefaultRouter()
-router.register(r"users", views.UserViewSet)
-router.register(r"groups", views.GroupViewSet)
+router.register(r"users", auth_views.UserViewSet)
+router.register(r"groups", auth_views.GroupViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -30,5 +31,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path('hello/', support_views.HelloView.as_view(), name='hello'),
 ]
 

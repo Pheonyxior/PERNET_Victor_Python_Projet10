@@ -1,0 +1,17 @@
+[project]
+name = "softdesk-api"
+version = "0.1.0"
+description = "Openclassrooms python projet 10 Créez une API sécurisée RESTful en utilisant Django REST"
+authors = [
+    {name = "Victor Pernet"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "djangorestframework (>=3.16.1,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
