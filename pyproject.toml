@@ -1,0 +1,19 @@
+[project]
+name = "softdesk-apirestful"
+version = "0.1.0"
+description = "SoftDesk, une société d'édition de logiciels de collaboration, a décidé de publier une application permettant de remonter et suivre des problèmes techniques. Cette solution, SoftDesk Support, s’adresse à des entreprises en B2B (Business to Business)."
+authors = [
+    {name = "Victor Pernet"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "djangorestframework (>=3.16.1,<4.0.0)",
+    "pygments (>=2.19.2,<3.0.0)",
+    "httpie (>=3.2.4,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
