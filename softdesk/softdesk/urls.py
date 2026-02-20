@@ -15,12 +15,36 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
 from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
+
+from softdesk.views import UserViewSet
+from snippets.views import SnippetViewSet
+
+
+
+router = DefaultRouter()
+router.register(r"snippets", SnippetViewSet, basename="snippet")
+router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", include("snippets.urls")),
+    path("", include(router.urls)),
+    # path("users/", views.UserList.as_view(), name="user-list"),
+    # path("users/<int:pk>/", views.UserDetail.as_view(), name="snippet-detail"),
+    
+    # path("snippets/", SnippetList.as_view(), name="snippet-list"),
+    # path("snippets/<int:pk>/", SnippetDetail.as_view(), name="snippet-detail"),
+    # path(
+    #     "snippets/<int:pk>/highlight/", 
+    #     SnippetHighlight.as_view(),
+    #     name="snippet-highlight"
+    # ),
 ]
+
+urlpatterns += [
+    path("api-auth/", include("rest_framework.urls")),
+]
+
 
