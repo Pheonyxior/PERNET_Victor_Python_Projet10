@@ -1,7 +1,7 @@
 from rest_framework import permissions, viewsets, generics
 
-from softdesk.models import User, Project, Issue, Comment
-from softdesk.serializers import UserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
+from softdesk.models import User, Project, Issue, Comment, Contributor
+from softdesk.serializers import UserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
 from snippets.permissions import IsOwnerOrReadOnly
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -17,6 +17,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
 
+
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -24,6 +25,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class ContributorViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
 
 
 class IssueViewSet(viewsets.ModelViewSet):

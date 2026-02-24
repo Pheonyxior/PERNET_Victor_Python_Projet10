@@ -1,4 +1,4 @@
-from softdesk.models import User, Project, Issue, Comment
+from softdesk.models import User, Project, Issue, Comment, Contributor
 from rest_framework import serializers
 from snippets.models import Snippet
 
@@ -17,11 +17,18 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ["url", "id", "username", "password", "snippets"]
+
     
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source="owner.username")
     class Meta:
         model = Project
+        fields = '__all__'
+
+
+class ContributorSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Contributor
         fields = '__all__'
 
 
