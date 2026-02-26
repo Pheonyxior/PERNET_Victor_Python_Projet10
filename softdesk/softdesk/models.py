@@ -20,9 +20,18 @@ class Project(models.Model):
     title = models.fields.CharField(max_length=128)
     description = models.fields.TextField(max_length=2048,
                                           blank=True)
-    owner = models.ForeignKey(User, related_name="projects", on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name="projects", on_delete=models.CASCADE, verbose_name="Autheur")
+    contributors = models.ManyToManyField(
+        User, through='Contributor', related_name="project_contributor", verbose_name="Contributeurs")
     type = models.fields.CharField(max_length=128, choices=TYPES, verbose_name="Type")
     time_created = models.fields.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        Contributor.objects.get_or_create(user=self.owner, project=self)
+
+    def __str__(self):
+        return self.title
 
 
 class Contributor(models.Model):
@@ -31,13 +40,11 @@ class Contributor(models.Model):
                              related_name='contributor')
     project = models.ForeignKey(to=Project,
                                 on_delete=models.CASCADE,
-                                related_name='followed_by')
+                                related_name='project')
+    time_created = models.fields.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # ensures we don't get multiple UserFollows instances
-        # for unique user-user_followed pairs
         unique_together = ('user', 'project', )
-        verbose_name_plural = "projects contributing to"
 
     def __str__(self) -> str:
         return "Contributor: " + str(self.user) + "of project " \

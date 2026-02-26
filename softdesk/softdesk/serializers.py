@@ -1,6 +1,5 @@
 from softdesk.models import User, Project, Issue, Comment, Contributor
 from rest_framework import serializers
-from snippets.models import Snippet
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(write_only=True)
