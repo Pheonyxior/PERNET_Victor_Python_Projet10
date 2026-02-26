@@ -20,12 +20,12 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from softdesk.views import UserViewSet, ProjectViewSet, IssueViewSet, CommentViewSet, ContributorViewSet
-from snippets.views import SnippetViewSet
+# from snippets.views import SnippetViewSet
 
 
 
 router = DefaultRouter()
-router.register(r"snippets", SnippetViewSet, basename="snippet")
+# router.register(r"snippets", SnippetViewSet, basename="snippet")
 router.register(r"users", UserViewSet, basename="user")
 router.register(r"projects", ProjectViewSet, basename="project")
 router.register(r"issues", IssueViewSet, basename="issue")

@@ -2,7 +2,7 @@ from rest_framework import permissions, viewsets, generics
 
 from softdesk.models import User, Project, Issue, Comment, Contributor
 from softdesk.serializers import UserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
-from snippets.permissions import IsOwnerOrReadOnly
+from authentication.permissions import IsOwnerOrReadOnly, ProjectPermission
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -19,9 +19,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
+    queryset = Project.objects.all().order_by("time_created")
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    contributor_serializer = ContributorSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ProjectPermission]
+
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -32,12 +34,12 @@ class ContributorViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    queryset = Contributor.objects.all()
+    queryset = Contributor.objects.all().order_by('-id')
     serializer_class = ContributorSerializer
 
 
 class IssueViewSet(viewsets.ModelViewSet):
-    queryset = Issue.objects.all()
+    queryset = Issue.objects.all().order_by("time_created")
     serializer_class = IssueSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
@@ -46,7 +48,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by("time_created")
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
