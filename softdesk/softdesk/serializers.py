@@ -19,7 +19,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.ReadOnlyField(source="owner.username")
+    author = serializers.ReadOnlyField(source="author.username")
     class Meta:
         model = Project
         fields = '__all__'
@@ -32,14 +32,14 @@ class ContributorSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class IssueSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.ReadOnlyField(source="owner.username")
+    author = serializers.ReadOnlyField(source="author.username")
     class Meta:
         model = Issue
         fields = '__all__'
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.ReadOnlyField(source="owner.username")
+    author = serializers.ReadOnlyField(source="author.username")
     class Meta:
         model = Comment
         fields = '__all__'
