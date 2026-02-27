@@ -1,8 +1,10 @@
 from rest_framework import permissions, viewsets, generics
 
 from softdesk.models import User, Project, Issue, Comment, Contributor
-from softdesk.serializers import UserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
-from authentication.permissions import IsOwnerOrReadOnly, ProjectPermission
+from softdesk.serializers import (
+    UserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer, 
+    ContributorSerializer)
+from authentication.permissions import IsAuthorOrReadOnly, IsContributor
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -22,11 +24,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all().order_by("time_created")
     serializer_class = ProjectSerializer
     contributor_serializer = ContributorSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ProjectPermission]
-
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAuthorOrReadOnly,
+        IsContributor
+        ]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(author=self.request.user)
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
@@ -37,31 +42,34 @@ class ContributorViewSet(viewsets.ModelViewSet):
     queryset = Contributor.objects.all().order_by('-id')
     serializer_class = ContributorSerializer
 
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsContributor
+        ]
+
 
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all().order_by("time_created")
     serializer_class = IssueSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAuthorOrReadOnly,
+        IsContributor
+        ]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(author=self.request.user, 
+                        contributor_assigned=self.request.user)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by("time_created")
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAuthorOrReadOnly,
+        IsContributor
+        ]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-# class UserList(generics.ListCreateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     def perform_create(self, serializer):
-#         serializer.save()
-
-
-# class UserDetail(generics.RetrieveAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
+        serializer.save(author=self.request.user)

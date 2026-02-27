@@ -39,7 +39,7 @@ class SnippetViewSet(viewsets.ModelViewSet):
         return Response(snippet.highlighted)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(author=self.request.user)
 
 
 # class SnippetList(generics.ListCreateAPIView):
@@ -48,7 +48,7 @@ class SnippetViewSet(viewsets.ModelViewSet):
 #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 #     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
+#         serializer.save(author=self.request.user)
 
 
 # class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
