@@ -3,9 +3,12 @@ from rest_framework import serializers
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(write_only=True)
-    snippets = serializers.HyperlinkedRelatedField(
-        many=True, view_name="snippet-detail", read_only=True
-    )
+
+    def validate(self, value):
+        print(value)
+        if value['age'] <= 15:
+            raise serializers.ValidationError("You canno't create a SoftDesk account if you are under 15.")
+        return value
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
@@ -15,7 +18,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ["url", "id", "username", "password", "snippets"]
+        fields = ["url", "id", "username", "password", "age", "can_data_be_shared", "can_be_contacted"]
 
     
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
