@@ -1,14 +1,11 @@
 from rest_framework import permissions, viewsets, generics
+from django.db.models import Q
 
 from softdesk.models import User, Project, Issue, Comment, Contributor
 from softdesk.serializers import (
     UserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer, 
     ContributorSerializer)
-from authentication.permissions import IsAuthorOrReadOnly, IsContributor
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.reverse import reverse
+from authentication.permissions import UserViewPermission, IsAuthorOrReadOnly, IsContributor
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -18,6 +15,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
+
+    permission_classes = [
+        UserViewPermission,
+        ]
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -35,10 +36,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-
     queryset = Contributor.objects.all().order_by('-id')
     serializer_class = ContributorSerializer
 
@@ -47,9 +44,18 @@ class ContributorViewSet(viewsets.ModelViewSet):
         IsContributor
         ]
 
+    def get_queryset(self):
+            # Prendre les projets auquel notre utilisateur contribue
+            # Filtrer tout les contributeurs si leurs projets figurent dans la liste de projets
+        if not self.request.user.is_authenticated:
+            return Contributor.objects.none()
+        user_projects = Contributor.objects.filter(user=self.request.user).values("project")
+        my_filter_qs = Q()
+        my_filter_qs = my_filter_qs | Q(project__in=user_projects)
+        return Contributor.objects.filter(my_filter_qs)
+
 
 class IssueViewSet(viewsets.ModelViewSet):
-    queryset = Issue.objects.all().order_by("time_created")
     serializer_class = IssueSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -60,10 +66,17 @@ class IssueViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, 
                         contributor_assigned=self.request.user)
+    
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Issue.objects.none()
+        user_projects = Contributor.objects.filter(user=self.request.user).values("project")
+        my_filter_qs = Q()
+        my_filter_qs = my_filter_qs | Q(project__in=user_projects)
+        return Issue.objects.filter(my_filter_qs).order_by("time_created")
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all().order_by("time_created")
     serializer_class = CommentSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -73,3 +86,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+    
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Comment.objects.none()
+        user_projects = Contributor.objects.filter(user=self.request.user).values("project")
+        my_filter_qs = Q()
+        my_filter_qs = my_filter_qs | Q(issue__project__in=user_projects)
+        return Comment.objects.filter(my_filter_qs).order_by("time_created")
+    
