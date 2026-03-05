@@ -5,7 +5,7 @@ from softdesk.models import User, Project, Issue, Comment, Contributor
 from softdesk.serializers import (
     UserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer, 
     ContributorSerializer)
-from authentication.permissions import UserViewPermission, IsAuthorOrReadOnly, IsContributor
+from authentication.permissions import UserViewPermission, IsAuthorOrReadOnly, IsContributor, IsUser
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -25,23 +25,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all().order_by("time_created")
     serializer_class = ProjectSerializer
     contributor_serializer = ContributorSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+    permission_classes = [ 
+        permissions.IsAuthenticated,
         IsAuthorOrReadOnly,
         IsContributor
         ]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
+    
 
 class ContributorViewSet(viewsets.ModelViewSet):
     queryset = Contributor.objects.all().order_by('-id')
     serializer_class = ContributorSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsContributor
+        permissions.IsAuthenticated,
+        IsContributor,
+        IsUser,
         ]
 
     def get_queryset(self):
@@ -58,7 +59,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
 class IssueViewSet(viewsets.ModelViewSet):
     serializer_class = IssueSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
         IsAuthorOrReadOnly,
         IsContributor
         ]
@@ -70,7 +71,7 @@ class IssueViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Issue.objects.none()
-        user_projects = Contributor.objects.filter(user=self.request.user).values("project")
+        user_projects = Contributor.objects.filter(user=self.request.user).values_list("project", flat=True)
         my_filter_qs = Q()
         my_filter_qs = my_filter_qs | Q(project__in=user_projects)
         return Issue.objects.filter(my_filter_qs).order_by("time_created")
@@ -79,7 +80,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
         IsAuthorOrReadOnly,
         IsContributor
         ]

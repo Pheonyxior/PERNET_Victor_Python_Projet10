@@ -36,13 +36,38 @@ class ContributorSerializer(serializers.HyperlinkedModelSerializer):
 
 class IssueSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.ReadOnlyField(source="author.username")
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        request = self.context.get("request")
+        if request and request.user and request.user.is_authenticated:
+            allowed_projects = Contributor.objects.filter(user=request.user).values("project")
+            self.fields["project"].queryset = Project.objects.filter(id__in=allowed_projects)
+            allowed_users = Contributor.objects.filter(project__in=allowed_projects).values("user")
+            queryset = User.objects.filter(id__in=allowed_users)
+            self.fields["contributor_assigned"].queryset = queryset
+    
+
     class Meta:
         model = Issue
         fields = '__all__'
+        
+    
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.ReadOnlyField(source="author.username")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        request = self.context.get("request")
+        if request and request.user and request.user.is_authenticated:
+            allowed_projects = Contributor.objects.filter(user=request.user).values("project")
+            self.fields["issue"].queryset = Issue.objects.filter(project__in=allowed_projects)
+            
+
     class Meta:
         model = Comment
         fields = '__all__'

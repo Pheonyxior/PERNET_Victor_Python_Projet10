@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -98,7 +99,7 @@ class Issue(models.Model):
     tag = models.fields.CharField(max_length=128, choices=TAGS, verbose_name="Balise")
     progression = models.fields.CharField(max_length=128, choices=PROGRESSION, verbose_name="Progression")
     
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project,on_delete=models.CASCADE)
 
     contributor_assigned = models.ForeignKey(
         User, limit_choices_to={'contributor__project': models.F('project_contributor')}, 
@@ -108,6 +109,10 @@ class Issue(models.Model):
     time_created = models.fields.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):
+    id = models.UUIDField(
+         primary_key = True,
+         default = uuid.uuid4,
+         editable = False)
     content = models.fields.TextField(max_length=2048)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     
