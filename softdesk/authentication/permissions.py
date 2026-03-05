@@ -8,6 +8,14 @@ class UserViewPermission(permissions.BasePermission):
         return obj == request.user
     
 
+class IsUser(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_staff or request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.user == request.user
+
+
 class IsAuthorOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow owners of an object to edit it.

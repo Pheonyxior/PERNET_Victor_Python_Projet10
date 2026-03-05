@@ -20,12 +20,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from softdesk.views import UserViewSet, ProjectViewSet, IssueViewSet, CommentViewSet, ContributorViewSet
-# from snippets.views import SnippetViewSet
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 router = DefaultRouter()
-# router.register(r"snippets", SnippetViewSet, basename="snippet")
 router.register(r"users", UserViewSet, basename="user")
 router.register(r"projects", ProjectViewSet, basename="project")
 router.register(r"issues", IssueViewSet, basename="issue")
@@ -35,21 +33,10 @@ router.register(r"contributors", ContributorViewSet, basename="contributor")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", include(router.urls)),
-    # path("users/", views.UserList.as_view(), name="user-list"),
-    # path("users/<int:pk>/", views.UserDetail.as_view(), name="snippet-detail"),
-    
-    # path("snippets/", SnippetList.as_view(), name="snippet-list"),
-    # path("snippets/<int:pk>/", SnippetDetail.as_view(), name="snippet-detail"),
-    # path(
-    #     "snippets/<int:pk>/highlight/", 
-    #     SnippetHighlight.as_view(),
-    #     name="snippet-highlight"
-    # ),
-]
-
-urlpatterns += [
     path("api-auth/", include("rest_framework.urls")),
-]
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("api/", include(router.urls)),
 
+]
 
