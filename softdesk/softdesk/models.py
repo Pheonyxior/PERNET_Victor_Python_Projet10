@@ -1,11 +1,13 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+
 
 class User(AbstractUser):
-    age = models.fields.SmallIntegerField()
+    age = models.fields.SmallIntegerField(blank=False)
     can_be_contacted = models.fields.BooleanField()
     can_data_be_shared = models.fields.BooleanField()
+    REQUIRED_FIELDS = ["age", "can_be_contacted", "can_data_be_shared"]
 
 
 class Project(models.Model):

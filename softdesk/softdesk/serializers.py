@@ -5,7 +5,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, value):
-        print(value)
         if value['age'] <= 15:
             raise serializers.ValidationError("You canno't create a SoftDesk account if you are under 15.")
         return value

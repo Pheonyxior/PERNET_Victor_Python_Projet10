@@ -1,6 +1,10 @@
+[tool.poetry]
+package-mode = false
+
+
 [project]
-name = "softdesk-apirestful"
-version = "0.1.0"
+name = "PERNET_Victor_Python_Projet10"
+version = "1.0.0"
 description = "SoftDesk, une société d'édition de logiciels de collaboration, a décidé de publier une application permettant de remonter et suivre des problèmes techniques. Cette solution, SoftDesk Support, s’adresse à des entreprises en B2B (Business to Business)."
 authors = [
     {name = "Victor Pernet"}
