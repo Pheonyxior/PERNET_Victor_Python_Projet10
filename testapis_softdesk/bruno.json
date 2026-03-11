@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "testapis_softdesk",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
